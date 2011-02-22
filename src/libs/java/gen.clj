@@ -1,32 +1,17 @@
 (ns libs.java.gen
   "Utilities for generating Java classes from clojure"
-  (:use (libs string))
+  (:use (libs char string))
   (:require [clojure.string :as str]))
 
-(defn java-name [s]
-  (let [[first-token & tokens] (.split s "-")]
-    (str/join (cons first-token
-                    (map capitalize tokens)))))
+(defn class-name [s]
+  (->> (.split (name s) "-")
+       (map str/capitalize)
+       str/join))
 
-(def class-name
-  (comp capitalize java-name))
+(defn method-name [s]
+  (vary-first-char (class-name s)
+                   lower-case))
 
 (def constant-name
   (comp str/upper-case
         #(.replace % "-" "_")))
-
-(def getter-name
-  (comp #(str "get" %)
-        class-name))
-
-(def setter-name
-  (comp #(str "set" %)
-        class-name))
-
-(defn clojure-prefix
-  [s & [prefix]]
-  (str (or prefix "-")
-       s))
-
-
-

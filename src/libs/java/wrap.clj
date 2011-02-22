@@ -16,7 +16,7 @@
   (->> s
        (re-seq #"[A-Z]?[a-z]*")
        butlast
-       (map (memfn toLowerCase))
+       (map str/lower-case)
        (str/join "-")))
 
 (def getters {})

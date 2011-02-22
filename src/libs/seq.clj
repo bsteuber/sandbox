@@ -1,4 +1,5 @@
-(ns libs.seq)
+(ns libs.seq
+  (:use (libs debug)))
 
 (defn one-element? [seq]
   (and (first seq)

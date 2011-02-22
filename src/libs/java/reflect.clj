@@ -1,4 +1,6 @@
-(ns libs.java.reflect)
+(ns libs.java.reflect
+  (:use (libs debug seq)
+        (libs.java gen)))
 
 (defn find-methods [class pred]
   (filter pred (.getMethods class)))
@@ -19,10 +21,18 @@
            %)
         (.getMethods class)))
 
-(defn call [obj method-name & args]
-  (if-let (m find-applicable-method (class obj)
-             (name method-name)
-             args)
+(defn call-method [obj method-name & args]
+  (if-let [m (find-applicable-method (class obj)
+                                     (java-name method-name)
+                                     args)]
+    (.invoke m obj (to-array args))
+    (error "No applicable method found")))
 
-    )
-  )
+(defn call-getter [obj slot-name]
+  (call-method obj
+        (str "get-" (name slot-name))))
+
+(defn call-setter [obj slot-name value]
+  (call-method obj
+        (str "set-" (name slot-name))
+        value))
