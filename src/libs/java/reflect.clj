@@ -6,20 +6,18 @@
   (filter pred (.getMethods class)))
 
 (defn find-method [class pred]
-  (let [methods (find-methods class pred)]
-    (if (one-element? methods)
-      (first methods))))
+  (one-element (find-methods class pred)
+               (str "Matching methods in class " class)))
 
-(defn applicable-to? [method args]
-  true)                                 ; TODO
+(defn applicable-to? [method name args]
+  (and (= (.getName method)
+          name)
+       (= (seq (.getParameterTypes method))
+          (seq (map class args)))))
 
 (defn find-applicable-method [class name args]
-  (some #(when
-             (and (= (.getName %)
-                     name)
-                  (applicable-to? % args))
-           %)
-        (.getMethods class)))
+  (find-method class
+               #(applicable-to? % name args)))
 
 (defn call-method [obj method-name & args]
   (if-let [m (find-applicable-method (class obj)
@@ -36,3 +34,10 @@
   (call-method obj
         (str "set-" (name slot-name))
         value))
+
+(defn call-constructor [clazz & args]
+  (let [constructor (->> args
+                         (map class)
+                         (into-array Class)
+                         (.getConstructor clazz))]
+    (.newInstance constructor (to-array args))))
