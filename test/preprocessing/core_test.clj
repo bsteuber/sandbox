@@ -21,7 +21,11 @@
                       (< i 5)
                       (++ i)]
                   (line i 0 100 100)))
-       "for (int i = 0; (i < 5); (i ++)) {
-  line(i, 0, 100, 100);
-}")))
+       "for (int i = 0; (i < 5); (i ++)) {\n  line(i, 0, 100, 100);\n}"))
+  (it "if")
+  (it "do")
+  (it "classes")
+  (it "when")
+  (it "unless"))
+
 

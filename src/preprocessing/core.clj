@@ -1,25 +1,8 @@
 (ns preprocessing.core
-  (:use (lib debug javagen))
+  (:use (libs codegen
+              debug
+              javagen))
   (:require [clojure.string :as str]))
-
-(def indent2    #(.replace % "\n" "\n  "))
-(def words      #(str/join " " %&))
-(def words*     #(str/join " " %))
-(def comma-sep  #(str/join ", " %&))
-(def comma-sep* #(str/join ", " %))
-(def parens     #(str "(" % ")"))
-
-(defn canonize [x]
-  (cond
-   (sequential? x)      (map canonize x)
-
-   (instance?
-    clojure.lang.Named
-    x)                  (if (#{"-"} (name x))
-                          (name x)
-                          (java-name (name x)))
-
-    :default            (str x)))
 
 (declare gen-cmds gen-expr)
 
@@ -54,25 +37,6 @@
          varname
          "="
          (gen-expr expr)))
-
-(def primitive-type?
-  #{"void" "int"})
-
-(def comparision-op?
-  #{"==" "<" ">" "<=" ">="})
-
-(def binary-op?
-  #{"+" "-" "*" "/" "=" "&&" "||"})
-
-(def postfix-op?
-  #{"++" "--"})
-
-(defn gen-binary-op [[op & args]]
-  (->> args
-       (map gen-expr)
-       (interpose op)
-       words*
-       parens))
 
 (defn gen-comparision-op [[op & args]]
   (let [compare-exprs (->> args

@@ -1,4 +1,4 @@
-My private sandbox for trying out new ideas
+A playground for trying out new ideas
 
 ## License
 
