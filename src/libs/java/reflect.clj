@@ -19,12 +19,17 @@
   (find-method class
                #(applicable-to? % name args)))
 
-(defn call-method [obj method-name & args]
-  (if-let [m (find-applicable-method (class obj)
-                                     (java-name method-name)
-                                     args)]
-    (.invoke m obj (to-array args))
-    (error "No applicable method found")))
+(defn call-method [obj method & args]
+  (let [args (for [arg args]
+                     (if (instance? Long arg)
+                       (Integer. arg)
+                       arg))]
+    (prn (map class args))
+    (if-let [m (find-applicable-method (class obj)
+                                       (method-name method)
+                                       args)]
+      (.invoke m obj (to-array args))
+      (error "No applicable method found"))))
 
 (defn call-getter [obj slot-name]
   (call-method obj

@@ -6,12 +6,12 @@
 (defn transform-filename [in-file f]
   (let [path (str/split (str in-file)
                         #"/")
-        [name season & dir] (reverse path)
-        res (f season name)]
+        [name dirname & rest] (reverse path)
+        res (f dirname name)]
     (if res
       {:in in-file
-       :out (file (str/join "/" (concat (reverse dir)
-                                         [season res])))})))
+       :out (file (str/join "/" (concat (reverse rest)
+                                         [dirname res])))})))
 
 (defn mass-rename [dir rename-fn & [do-it?]]
   (doseq [{:keys [in out]}
@@ -28,10 +28,16 @@
 ;;; Renaming sub-titles
 
 (defn rename-sub [season name]
-  (let [re #".*(\d\d).*(\d\d).*srt"
+  (let [re #".*24.*(\d\d).*(\d\d).*srt"
         ms (re-matches re name)]
     (if ms
       (str season (nth ms 2) ".srt"))))
 
+(defn rename-physik-skript [_ name]
+  (let [[skript day month year pdf] (str/split name #"[._]")]
+    (str skript "_" year "_" month "_" day ".pdf")))
+
 (comment
-  (mass-rename "Some/directory" rename-sub))
+  (mass-rename "/Users/ben/Movies/24/Staffel 7" rename-sub))
+
+(mass-rename "/Users/ben/uni/physik" rename-physik-skript true)

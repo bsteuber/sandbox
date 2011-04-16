@@ -7,6 +7,7 @@
   obj)
 
 (defn construct [class & updates]
+  (prn class updates)
   (apply set-slots
          (call-constructor class)
          updates))
